@@ -2,4 +2,4 @@ pandas
 plotly.express
 datetime
 streamlit
-from urllib.error import URLError
+URLError
