@@ -54,7 +54,7 @@ def display_dynamics(data):
 	data.Date.min().to_pydatetime(), data.Date.max().to_pydatetime(),
 	(datetime.datetime(2016, 1, 1, 0, 0),  datetime.datetime(2016, 12, 31, 0, 0)))
 	
-	filtered_data = data[data['Date'].between(min_index, max_index)].sort_values(by='Date').groupby('Date').mean().reset_index()
+	filtered_data = data[data['Date'].between(min_index, max_index)].sort_values(by='Date').groupby('Date').mean()
 
 	for option in selected_options:
 		fig = px.line(filtered_data, x='Date', y=option)
