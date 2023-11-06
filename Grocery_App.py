@@ -2,7 +2,7 @@ import plotly.express as px
 import pandas as pd
 import datetime
 import streamlit as st
-from urllib.error import URLError
+
 
 st.set_page_config(
 	page_title='Аналіз покупок користувачів',
@@ -95,27 +95,20 @@ name = st.text_input('Як вас звати?')
 if name:
 	st.write(f'Вітаємо, {name}!') 
                  
-try:
-    df = load_data()
-    df.Date = pd.to_datetime(df.Date)
-    display_data(df)
 
-    if st.sidebar.checkbox('Показати гістограми'):
-        display_histograms(df)
+df = load_data()
+df.Date = pd.to_datetime(df.Date)
+display_data(df)
 
-    if st.sidebar.checkbox('Показати середні показники в динаміці за датою'):
+if st.sidebar.checkbox('Показати гістограми'):
+	display_histograms(df)
+
+if st.sidebar.checkbox('Показати середні показники в динаміці за датою'):
         display_dynamics(df)
         
-    if st.sidebar.checkbox('Показати бульбашкові діаграми характеристик різних банків'):
-    	display_bubbles(df)
+if st.sidebar.checkbox('Показати бульбашкові діаграми характеристик різних банків'):
+	display_bubbles(df)
 
-except URLError as e:
-    st.error(
-        f"""
-        **Для цієї демонстрації потрібен доступ до Інтернету.**
-         Помилка підключення: {e.reason}
-        """
-    )
                  
                  
                  
