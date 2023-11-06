@@ -9,9 +9,11 @@ st.set_page_config(
 	page_icon='👋'
 )
 
+
 OPTIONS = ['DISC', 'Amount', 'Net Bill Amount', 'GST', 'Gross Bill Amount', 
 	'% Profit Margin', '% Operating Cost', '% Product Cost',
 	'Profit Margin', 'Operating Cost', 'Product Cost']
+
 
 @st.cache_data
 def load_data():
@@ -20,9 +22,6 @@ def load_data():
         "https://docs.google.com/spreadsheets/d/e/2PACX-1vQf1s4z3C0iRAKOu6ClRTZbqN4ocTWoJX5KLynr7iB_ieK2bP5eZXmX7zyHBr9lmLud1ec4Ve71544L/pub?"
         "gid=335944704&single=true&output=csv")
 	return pd.read_csv(data_url)
-
-
-
 
 
 def display_data(data):
@@ -34,7 +33,6 @@ def display_data(data):
 		st.write(data.iloc[min_index:max_index])
 
 	
-	
 def display_histograms(data):
 	"""Відображення гістограм для обраних стовпців"""
 	selected_options = st.sidebar.multiselect('Оберіть колонку для побудови гістограми',
@@ -44,22 +42,23 @@ def display_histograms(data):
 		fig = px.histogram(data, x=option)
 		fig.update_traces(opacity=.4) 
 		st.plotly_chart(fig)
-		
+
+
 def display_dynamics(data):
 	"""Відображення середнього показника у динаміці для обраних стовпців""" 
 	selected_options = st.sidebar.multiselect('Оберіть колонку для побудови графіку в динаміці',
-						  (OPTIONS), placeholder = 'Chose an option')
+						  (OPTIONS), 
+						  placeholder = 'Chose an option')
 	
 	min_index, max_index = st.slider('Оберіть, з якого по який рядочки даних ви хочете переглянути', 
-	data.Date.min().to_pydatetime(), data.Date.max().to_pydatetime(),
-	(datetime.datetime(2016, 1, 1, 0, 0),  datetime.datetime(2016, 12, 31, 0, 0)))
-	
-	filtered_data = data[data['Date'].between(min_index, max_index)].sort_values(by='Date').groupby('Date').mean()
+					data.Date.min().to_pydatetime(), 
+					data.Date.max().to_pydatetime(),
+					format="YYYY-MM-DD",
+					value=(datetime.datetime(2016, 1, 1, 0, 0),  datetime.datetime(2016, 12, 31, 0, 0)))
 
 	for option in selected_options:
-		fig = px.line(filtered_data, x='Date', y=option)
-		fig.update_layout(title=f'{option}')
-		st.plotly_chart(fig)
+		filtered_data = data[data.Date.between(min_index, max_index)].groupby('Date')[option].mean()
+		st.line_chart(filtered_data, y=option)
 
 
 def display_bubbles(data):
@@ -73,7 +72,8 @@ def display_bubbles(data):
 	(bank_options), placeholder = 'Chose an option'
 	)
 	
-	selected_year_option = st.radio('Оберіть рік, за який хочете отримати дані', year_options,
+	selected_year_option = st.radio('Оберіть рік, за який хочете отримати дані', 
+					year_options,
 					horizontal=True)
 	
 	selected_country_option = st.multiselect('Оберіть країну, яка Вас цікавить', country_options)
@@ -99,6 +99,7 @@ if name:
 df = load_data()
 df.Date = pd.to_datetime(df.Date)
 display_data(df)
+
 
 if st.sidebar.checkbox('Показати гістограми'):
 	display_histograms(df)
