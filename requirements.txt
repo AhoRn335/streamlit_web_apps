@@ -1,4 +1,4 @@
 pandas
 plotly.express
 datetime
-streamlit
+streamlit 1.27.1
